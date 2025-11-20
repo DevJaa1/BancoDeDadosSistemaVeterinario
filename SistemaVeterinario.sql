@@ -1,3 +1,4 @@
+/*
 DROP TABLE IF EXISTS  telefone_proprietario;
 DROP TABLE IF EXISTS email_proprietario;
 DROP TABLE IF EXISTS animaL;
@@ -56,30 +57,80 @@ CREATE TABLE telefone_veterinario(
 	numero_telefone_veterinario VARCHAR(200),
 	FOREIGN KEY (fk_id_veterinario) REFERENCES veterinario(id_veterinario)
 );
+*/
+DROP TABLE IF EXISTS consultas;
+DROP TABLE IF EXISTS  telefone_proprietario;
+DROP TABLE IF EXISTS email_proprietario;
+DROP TABLE IF EXISTS animal;
+DROP TABLE IF EXISTS propietario_animais;
+DROP TABLE IF EXISTS telefone_veterinario;
+DROP TABLE IF EXISTS veterinario;
+
+CREATE TABLE propietario_animais(
+	id_proprietario BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	nome_proprietario VARCHAR(200),
+	cpf_proprietario VARCHAR(14) UNIQUE,
+	uf VARCHAR(2),
+	logradouro VARCHAR(200),
+	numero VARCHAR(10),
+	bairro VARCHAR(200),
+	cep VARCHAR(9),
+	cidade VARCHAR(200)
+);
+
+CREATE TABLE telefone_proprietario(
+	id_telefone_proprietario BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	fk_id_proprietario BIGINT,
+	numero_telefone VARCHAR(20),
+	FOREIGN KEY (fk_id_proprietario) REFERENCES propietario_animais(id_proprietario)
+);
+
+CREATE TABLE email_proprietario(
+	id_email_proprietario BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	fk2_id_proprietario BIGINT,
+	email VARCHAR(200),
+	FOREIGN KEY (fk2_id_proprietario ) REFERENCES 	     propietario_animais(id_proprietario)
+);
+
+CREATE TABLE animal(
+	id_animal BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	nome_animal VARCHAR(200),
+	especie_animal VARCHAR(200),
+	raca_animal VARCHAR(200),
+	data_de_nascimento_animal DATE,
+	peso_animal numeric(10,2),
+	proprietario BIGINT,
+	FOREIGN KEY (proprietario) REFERENCES propietario_animais(id_proprietario)
+);
 
 
+CREATE TABLE veterinario(
+	id_veterinario BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	nome_veterinario VARCHAR(200),
+	crmv_veterinario VARCHAR(200) UNIQUE,
+	especialidade_veterinario VARCHAR(200)
+);
+
+CREATE TABLE telefone_veterinario(
+	id_telefone_veterinario BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	fk_id_veterinario BIGINT,
+	numero_telefone_veterinario VARCHAR(20),
+	FOREIGN KEY (fk_id_veterinario) REFERENCES veterinario(id_veterinario)
+);
+
+CREATE TABLE consultas(
+  id_consulta BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  data_hora_consulta TIMESTAMP,
+  diagnostico TEXT,
+  valor numeric(20,2),
+  fk2_id_veterinario BIGINT,
+  fk_id_animal BIGINT,
+  FOREIGN KEY (fk2_id_veterinario) REFERENCES veterinario (id_veterinario),
+  FOREIGN KEY (fk_id_animal) REFERENCES animal (id_animal)
+ );
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+--DML
 INSERT INTO propietario_animais (nome_proprietario, cpf_proprietario, uf, logradouro, numero, bairro, cep, cidade) VALUES
 ('Ana Silva Pereira', 12345678901, 'SP', 'Rua das Flores', '100', 'Jardim Paulista', '01426-000', 'São Paulo'),
 ('Carlos Eduardo Santos', 98765432109, 'RJ', 'Av. Atlântica', '1500', 'Copacabana', '22070-000', 'Rio de Janeiro'),
@@ -122,14 +173,7 @@ INSERT INTO telefone_veterinario (fk_id_veterinario, numero_telefone_veterinario
 (3, '(31) 98765-1234');
 
 
-
-
-
-
-
-
-
-
+--DQL
 --SELECT id_proprietario,nome_proprietario, cpf_proprietario,numero_telefone,email, uf, logradouro, numero, bairro, cep, cidade FROM propietario_animais 
 --INNER JOIN telefone_proprietario ON fk_id_proprietario = id_proprietario
 --INNER JOIN email_proprietario ON fk2_id_proprietario = id_proprietario
